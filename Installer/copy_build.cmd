@@ -8,35 +8,20 @@ REM IF "%~3" == "" ( set "qt6_version=6.3.1" ) ELSE ( set "qt6_version=%~3" )
 REM IF "%~2" == "" ( set "qt_version=5.15.16" ) ELSE ( set "qt_version=%~2" )
 
 IF "%openssl_version:~0,3%" == "1.1" ( set "sslMajorVersion=1_1" ) ELSE ( set "sslMajorVersion=3" )
-
-IF %1 == x86 (
-  set archPath=Win32
-  call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
-  set qtPath=%~dp0..\..\Qt\%qt_version%\msvc2022
-  set instPath=%~dp0\SbiePlus_x86
-)
 IF %1 == x64 (
   set archPath=x64
-  call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-REM  set qtPath=%~dp0..\..\Qt\%qt6_version%\msvc2022_64
-  set qtPath=%~dp0..\..\Qt\%qt_version%\msvc2022_64
-  set instPath=%~dp0\SbiePlus_x64
+  call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+REM  set qtPath="D:\Test\Qt\6.9.1\msvc2022_64"
+  set qtPath="D:\Test\Qt\6.9.1\msvc2022_64"
+  set instPath="D:\Test\Sandboxie\Installer\SbiePlus_x64"
 )
-IF %1 == ARM64 (
-  set archPath=ARM64
-  call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"
-  set qtPath=%~dp0..\..\Qt\%qt6_version%\msvc2022_arm64
-  set instPath=%~dp0\SbiePlus_a64
-  set "sslMajorVersion=1_1"
-)
-
 set redistPath=%VCToolsRedistDir%\%1\Microsoft.VC143.CRT
-REM set redistPath="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Redist\MSVC\%VCToolsVersion%\%1\Microsoft.VC143.CRT"
+REM set redistPath="C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\%VCToolsVersion%\%1\Microsoft.VC143.CRT"
 
 @echo on
 
-set srcPath=%~dp0..\SandboxiePlus\Bin\%archPath%\Release
-set sbiePath=%~dp0..\Sandboxie\Bin\%archPath%\SbieRelease
+set srcPath="D:\Test\Sandboxie\SandboxiePlus\Bin\x64\Release"
+set sbiePath="D:\Test\Sandboxie\Sandboxie\Bin\x64\SbieRelease"
 
 echo inst: %instPath%
 echo arch: %archPath%
@@ -92,7 +77,7 @@ IF NOT %archPath% == Win32 (
 
 
 ECHO Copying 7zip library
-copy /y %~dp07-Zip\7-Zip-%archPath%\7z.dll %instPath%\
+copy /y "D:\Test\Sandboxie\Installer\7-Zip-x64\7z.dll" %instPath%
 
 
 ECHO Copying SandMan project and libraries
@@ -122,10 +107,10 @@ copy /y %qtPath%\translations\qtscript_*.qm %instPath%\translations\
 copy /y %qtPath%\translations\qtxmlpatterns_*.qm %instPath%\translations\
 )
 
-"C:\Program Files\7-Zip\7z.exe" a %instPath%\translations.7z %instPath%\translations\*
-rmdir /S /Q %instPath%\translations\
+"E:\Program Files\7-Zip\7z.exe" a "%instPath%\translations.7z" "%instPath%\translations\*"
+rmdir /S /Q "%instPath%\translations\"
 
-"C:\Program Files\7-Zip\7z.exe" a %instPath%\troubleshooting.7z %~dp0..\SandboxiePlus\SandMan\Troubleshooting\*
+"E:\Program Files\7-Zip\7z.exe" a "%instPath%\troubleshooting.7z" "%~dp0..\SandboxiePlus\SandMan\Troubleshooting\*"
 
 ECHO Copying Sandboxie
 

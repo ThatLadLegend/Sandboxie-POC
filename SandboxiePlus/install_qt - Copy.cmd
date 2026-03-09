@@ -10,9 +10,9 @@ REM IF "%~2" == "" ( set "qt_version=5.15.16" ) ELSE ( set "qt_version=%~2" )
 
 if exist "%~dp0..\..\Qt\%qt_version%\msvc2022_64\bin\qmake.exe" goto done
 
-curl -L -o "%~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86_64.7z" https://github.com/%ghQtBuilds_user%/%ghQtBuilds_repo%/releases/download/v%qt_version%-ssl-lgpl/qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86_64.7z
-"E:\Program Files\7-Zip\7z.exe" x -aoa -o"D:\Virtual Machine VM's\Qt\" "D:\Virtual Machine VM's\qt-everywhere-6.8.3-Windows_7-MSVC2022-x86_64.7z"
-certutil -hashfile "%~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86_64.7z" SHA256 | find /i "%ghQtBuilds_hash_x64%"
+curl -L -o "%~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86_64.7z" https://download.qt.io/archive/qt/6.9/6.9.1/single/qt-everywhere-src-6.9.1.zip
+"E:\Program Files\7-Zip\7z.exe" x -aoa -o"D:\Virtual Machine VM's\Qt\" "D:\Virtual Machine VM's\qt-everywhere-src-6.9.1.zip"
+
 
 
 if %ERRORLEVEL% == 1 exit /b 1

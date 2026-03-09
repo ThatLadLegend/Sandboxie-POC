@@ -42,5 +42,5 @@ endlocal
 
 :done
 
-"C:\Program Files\7-Zip\7z.exe" x -bd -o%~dp0\OpenSSL\ %~dp0\OpenSSL\OpenSSL-%openssl_version%.zip
+"E:\Program Files\7-Zip\7z.exe" x -bd -o%~dp0\OpenSSL\ %~dp0\OpenSSL\OpenSSL-%openssl_version%.zip
  
