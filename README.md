@@ -1,195 +1,135 @@
-# Sandboxie Plus / Classic
+# 📦 Sandboxie Custom Build & Certificate Handling
 
-<p align='center'>
-EN | <a href='./README_zh_CN.md'>中文</a>
-</p>
+This repository contains a modified build of the open-source [Sandboxie](https://github.com/sandboxie/sandboxie) project. It introduces custom certificate handling and specialized driver loading for `SbieDrv.sys` on Windows 10/11.
 
-[![Plus license](https://img.shields.io/badge/Plus%20license-Custom%20-blue.svg)](./LICENSE.Plus) [![Classic license](https://img.shields.io/github/license/Sandboxie-Plus/Sandboxie?label=Classic%20license&color=blue)](./LICENSE.Classic) [![GitHub Release](https://img.shields.io/github/release/sandboxie-plus/Sandboxie.svg)](https://github.com/sandboxie-plus/Sandboxie/releases/latest) [![GitHub Pre-Release](https://img.shields.io/github/release/sandboxie-plus/Sandboxie/all.svg?label=pre-release)](https://github.com/sandboxie-plus/Sandboxie/releases) [![GitHub Build Status](https://github.com/sandboxie-plus/Sandboxie/actions/workflows/main.yml/badge.svg)](https://github.com/sandboxie-plus/Sandboxie/actions) [![GitHub Codespell Status](https://github.com/sandboxie-plus/Sandboxie/actions/workflows/codespell.yml/badge.svg)](https://github.com/sandboxie-plus/Sandboxie/actions/workflows/codespell.yml) [![WinGet Build Status](https://github.com/sandboxie-plus/Sandboxie/actions/workflows/winget.yml/badge.svg)](https://github.com/sandboxie-plus/Sandboxie/actions/workflows/winget.yml) [![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20Sandboxie%20Guru-006BFF)](https://gurubase.io/g/sandboxie)
+---
 
-[![Roadmap](https://img.shields.io/badge/Roadmap-Link%20-blue?style=for-the-badge)](https://www.wilderssecurity.com/threads/updated-sandboxie-plus-roadmap.456886/) [![Join our Discord Server](https://img.shields.io/badge/Join-Our%20Discord%20Server%20for%20bugs,%20feedback%20and%20more!-blue?style=for-the-badge&logo=discord)](https://discord.gg/S4tFu6Enne)
+## 📑 Table of Contents
+1. [Prerequisites & Environment](#-prerequisites--environment)
+2. [Step 1: Setup Preparation Scripts](-1-setup-preparation-scripts)
+3. [Step 2: Visual Studio Configuration](#-2-visual-studio-project-configuration)
+4. [Step 3: Compilation Workflow (Build Order)](#-3-compilation-workflow)
+5. [Step 4: Custom Certificate Handling](#-4-custom-certificate-handling)
+6. [Step 5: Driver Loading (SbieDrv.sys)](#-5-driver-loading-sbiedrvsys)
+7. [Credits & Links](#-credits--links)
 
-|  System requirements  |      Release notes     |     Contribution guidelines   |      Security policy      |      Code of Conduct      |
-|         :---:         |          :---:         |          :---:                |          :---:            |          :---:            |
-| Windows 7 or higher (64-bit) |  [CHANGELOG.md](./CHANGELOG.md)  |  [CONTRIBUTING.md](./CONTRIBUTING.md)  |   [SECURITY.md](./SECURITY.md)  |  [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)  |
+---
 
-Sandboxie is a sandbox-based isolation software for Windows NT-based operating systems that creates a secure operating environment in which applications can be run or installed without permanently modifying local & mapped drives or the Windows registry. An isolated virtual environment allows controlled testing of untrusted programs and web surfing.<br>
+## 🛠 Prerequisites & Environment
 
-Sandboxie allows you to create virtually unlimited sandboxes and run them alone or simultaneously to isolate programs from the host and each other, while also allowing you to run as many programs simultaneously in a single box as you wish.
+To successfully reproduce this build, you must have the following specific versions installed via the **Visual Studio Installer**:
 
-**Note: This is a community fork that took place after the release of the Sandboxie source code and not the official continuation of the previous development (see the [project history](#project-history) and [#2926](https://github.com/sandboxie-plus/Sandboxie/issues/2926)).**
+* **Visual Studio 2022** (with *Desktop development with C++* workload)
+* **Windows 10 SDK (10.0.19041.0)** — *Crucial for compatibility.*
+* **MSVC v142 Build Tools** — (Required for specific core components).
+* **MFC for v142 Build Tools** — (Select this from the *Individual Components* tab).
+* **Windows Driver Kit (WDK) 10.0.19041** — [Download Link](https://go.microsoft.com/fwlink/?linkid=2128854).
 
-## ⏬ Download
+> [!IMPORTANT]
+> If the WDK Extension doesn't install automatically in VS 2022, manually run the VSIX installer found in your WDK installation path (usually `...\10\Vsix\VS2022`).
 
-[Latest Release](https://github.com/sandboxie-plus/Sandboxie/releases/latest)
+---
 
-## ✨ Changelog
+## ⚙️ 1. Setup Preparation Scripts
 
-<a href='./CHANGELOG.md'>EN</a>
+The helper scripts in the `Installer/` folder contain **absolute paths** hardcoded from the original development environment. You must update these to match your local folders.
 
-## 🚀 Features
+1.  Open the `Installer/` directory.
+2.  Edit the following files in a text editor:
+    * `get_7zip.bat`
+    * `get_openssl.bat`
+    * `copy_build.bat`
+3.  **Action:** Search for any hardcoded paths (e.g., `C:\Test\Sandboxie\...`) and update them to your actual local paths.
+4.  **Run:** Execute all three scripts to fetch dependencies and prepare the `Installer\SbiePlus_x64` folder.
 
-Sandboxie is available in two editions, Plus and Classic. They both share the same core components, this means they have the same level of security and compatibility.
-What's different is the availability of features in the user interface.
+---
 
-Sandboxie Plus has a modern Qt-based UI, which supports all new features that have been added since the project went open source:
+## 🧰 2. Visual Studio Project Configuration
 
-  * Snapshot Manager - takes a copy of any box in order to be restored when needed
-  * Maintenance menu - allows to uninstall/install/start/stop Sandboxie driver and service when needed
-  * Portable mode - you can run the installer and choose to extract all files to a directory
-  * Additional UI options to block access to Windows components like printer spooler and clipboard
-  * More customization options for Start/Run and Internet access restrictions
-  * Privacy mode sandboxes that protect user data from illegitimate access
-  * Security enhanced sandboxes that restrict the availability of syscalls and endpoints
-  * Global hotkeys to suspend or terminate all boxed processes
-  * A network firewall per sandbox which supports Windows Filtering Platform (WFP)
-  * The list of sandboxes can be searched with the shortcut key Ctrl+F
-  * A search function for Global Settings and Sandbox Options
-  * Ability to import/export sandboxes to and from 7z files
-  * Integration of sandboxes into the Windows Start menu
-  * A browser compatibility wizard to create templates for unsupported browsers
-  * Vintage View mode to reproduce the graphical appearance of Sandboxie Control
-  * A troubleshooting wizard to assist users with their problems
-  * An Add-on manager to extend or add functionality via additional components
-  * Protections of sandboxes against the host, including the prevention of taking screenshots
-  * A trigger system to perform actions, when a sandbox goes through different stages, like initialization, box start, termination or file recovery
-  * Make a process not sandboxed, but its child processes sandboxed
-  * Force programs to automatically use a user-provided SOCKS5 proxy
-  * DNS control by blocking or redirecting
-  * Limit the amount of memory space a single process in the sandbox can occupy and the total amount of memory space all processes can occupy, and You can limit the total number of sandboxed processes per box
-  * A completely different token creation mechanism from Sandboxie's pre-open-source version makes sandboxes more independent in the system
-  * Encrypted Sandbox - an AES-based reliable data storage solution
-  * Prevent sandboxed programs from generating unnecessary unique identifier in the normal way
-  * An internal INI editor that aids the user with visual hints and tooltips on the settings they have configured or want to add
-  * The ability to configure an external text editor, beside the system default
-  * Control over the alpha transparency of the border
-  * A custom UAC-dialog, allowing to fake permission, grant them or cancel the elevation attempt
-  * Modern icons, while you can use the old-school ones in certain places
-  * You can change the font of the user interface
-  * Custom colors or icons can be used for sandboxes or groups
+You must manually point the project to your specific SDK and MSVC toolset. Right-click the projects in **Solution Explorer** and go to **Properties**.
 
-More features can be spotted by finding the sign `=` through the shortcut key Ctrl+F in the [CHANGELOG.md](./CHANGELOG.md) file.
+### **Sandman Project**
+* **Additional Include Directories:**
+    ```text
+    C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\atlmfc\include
+    ```
+* **Additional Library Directories:**
+    ```text
+    C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\atlmfc\lib\x64
+    ```
 
-Sandboxie Classic has the old no longer developed MFC-based UI, hence it lacks native interface support for Plus features. Although some of the missing features can be configured manually in the Sandboxie.ini configuration file or even replaced with [custom scripts](https://sandboxie-website-archive.github.io/www.sandboxie.com/old-forums/viewforum1a2d1a2d.html?f=22), the Classic edition is not recommended for users who want to explore the latest security options.
+### **SbieShell Project**
+Ensure paths point to the **10.0.19041.0** SDK folder.
+* **Additional Include Directories:**
+    ```text
+    C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\winrt;
+    C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared;
+    C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um;
+    C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt;
+    ```
 
-## 📚 Documentation
+---
 
-A GitHub copy of the [Sandboxie documentation](https://sandboxie-plus.github.io/sandboxie-docs) is currently maintained, although more volunteers are needed to keep it updated with the new changes. It is recommended to also check the following labels to track current issues: [Labels · sandboxie-plus/Sandboxie](https://github.com/sandboxie-plus/Sandboxie/labels).
+## 🚀 3. Compilation Workflow
 
-A partial archive of the [old Sandboxie forum](https://sandboxie-website-archive.github.io/www.sandboxie.com/old-forums) that was previously maintained by Invincea is still available. If you need to find something specific, it is possible to use the following search query: `site:https://sandboxie-website-archive.github.io/www.sandboxie.com/old-forums/`.
+> [!IMPORTANT]
+> To compile for **x64**, you must first compile the **LowLevel** components for **Win32 (x86)**.
 
+1.  Open [`Sandbox.sln`](./Sandboxie/Sandbox.sln) in **Visual Studio 2022**.
+2.  Set Configuration to **Release** | **Win32**.
+3.  Right-click `Solution/core/LowLevel` and select **Build**.
+4.  Switch Configuration to **Release** | **x64**.
+5.  Select **Build -> Build Solution**.
+6.  **Output:** Use the [`copy_build.bat`](./Installer/copy_build.bat) script to move compiled files into [`Installer\SbiePlus_x64`](./Installer/).
 
-## 🚀 Useful tools for Sandboxie
+---
 
-Sandboxie's functionality can be enhanced with specialized tools like the following:
+## 🔑 4. Custom Certificate Handling
 
-  * [LogApiDll](https://github.com/sandboxie-plus/LogApiDll) - adds a verbose output to Sandboxie's trace log, listing invocations of relevant Windows API functions
-  * [SbieHide](https://github.com/VeroFess/SbieHide) - attempts to hide the presence of SbieDll.dll from the application being sandboxed
-  * [SandboxToys2](https://github.com/blap/SandboxToys2) - allows to monitor files and registry changes in a sandbox
-  * [Sbiextra](https://github.com/sandboxie-plus/sbiextra) - adds additional user mode restrictions to sandboxed processes
-  * [WrapLocale](https://github.com/UserUnknownFactor/WrapLocale) - provide more flexible locale pretending options than native LangId feature
+The software requires a `Certificate.dat` file in the application directory to unlock features. This file is parsed to determine your access level within the custom build.
 
-<a id="project-history"></a>
-## 📌 Project history
+**Create a file named `Certificate.dat` with this structure:**
+```ini
+NAME=DevUser // Required
+TYPE=DEVELOPER // Required
+SOFTWARE=Sandboxie // Required
+DATE=2099-12-31 // Optional
+SIGNATURE=0000 // Can be anything
+UPDATEKEY=0000 // Optional
+```
 
-|      Timeline       |    Maintainer    |
-|        :---         |       :---       |
-| 2004 - 2013         | Ronen Tzur       |
-| 2013 - 2017         | Invincea Inc.    |
-| 2017 - 2020         | Sophos Group plc |
-| 8 April 2020 - [open-source code](https://community.sophos.com/sandboxie/f/forum/119641/important-sandboxie-open-source-code-is-available-for-download) | Sophos Ltd. |
-| 9 April 2020 onwards - project fork | David Xanatos |
+> [!TIP]
+> **Supported TYPE values (Case-Insensitive):**
+> * `DEVELOPER` / `CONTRIBUTOR` / `ETERNAL` (Full access) - *Personally, I'd go with one of these*.
+> * `PATREON` (Variants like `ENTRY_PATREON` include a 3-month expiry check)
+> * `BUSINESS` / `PERSONAL` / `SUPPORTER`
 
-Looking for older Sandboxie versions? Check the [version history](https://github.com/sandboxie-plus/sandboxie-old).
+---
 
-See the current [roadmap](https://www.wilderssecurity.com/threads/updated-sandboxie-plus-roadmap.456886/).
+## 🚙 5. Driver Loading (SbieDrv.sys)
 
-## 📌 Project support / sponsorship
+The kernel driver must be loaded before the Sandboxie service can function. Because this is a custom build, the driver is not signed by Microsoft.
 
-[<img align="left" height="64" width="64" src="./.github/images/binja-love.png">](https://binary.ninja/)
-Thank you [Vector 35](https://vector35.com/) for providing a [Binary Ninja](https://binary.ninja/) license to help with reverse engineering.
-<br>
-Binary Ninja is a multi-platform interactive disassembler, decompiler, and binary analysis tool for reverse engineers, malware analysts, vulnerability researchers, and software developers.<br>
-<br>
-[<img align="left" height="64" width="64" src="./.github/images/Icons8_logo.png">](https://icons8.de/)Thank you [Icons8](https://icons8.de/) for providing icons for the project.
-<br>
-<br>
-<br>
+### **Method A: GDRVLoader (Secure Boot ON)**
+This is the recommended method for systems with Secure Boot enabled. It uses a signed exploit/helper to load the unsigned driver.
+1. Place `GDRVLoader.exe` next to your compiled `SbieDrv.sys`.
+2. Open an **Elevated Command Prompt** (Administrator).
+3. Execute: `GDRVLoader.exe SbieDrv.sys`
+4. When the loader prompt appears, type `load`.
 
-## 🤝 Support the project
+### **Method B: Test-Signing (Secure Boot OFF)**
+> [!TIP]
+> This is most likely the easiest, but sometimes you need Secure Boot on for some games.
 
-If you find Sandboxie useful, then feel free to contribute through our [Contribution guidelines](./CONTRIBUTING.md).
+If Secure Boot is disabled in your BIOS, you can use Windows Test Mode.
+1. Open an **Elevated Command Prompt**.
+2. Run: `bcdedit.exe -set TESTSIGNING ON`
+3. **Reboot your system.** (A "Test Mode" watermark will appear on your desktop).
+4. Start the Sandboxie service.
 
-## 📑 Helpful Contributors
+---
 
-- DavidBerdik - Maintainer of [Sandboxie Website Archive](https://github.com/Sandboxie-Website-Archive/sandboxie-website-archive.github.io)
-- Jackenmen - Maintainer of Chocolatey packages for Sandboxie ([support](https://github.com/Jackenmen/choco-auto/issues?q=is%3Aissue+Sandboxie))
-- vedantmgoyal9 - Maintainer of Winget Releaser for Sandboxie ([support](https://github.com/vedantmgoyal9/winget-releaser/issues?q=is%3Aissue+Sandboxie))
-- blap - Maintainer of [SandboxToys2](https://github.com/blap/SandboxToys2) addon
-- diversenok - Security analysis & PoCs / Security fixes
-- TechLord - Team-IRA / Reversing
-- hg421 - Security analysis & PoCs / Code reviews
-- hx1997 - Security analysis & PoC
-- mpheath - Author of Plus installer / Code fixes / Collaborator
-- offhub - Documentation additions / Code fixes / Qt5 patch and build script / Collaborator
-- LumitoLuma - Qt5 patch and build script
-- QZLin - Author of [sandboxie-docs](https://sandboxie-plus.github.io/sandboxie-docs/) theme
-- isaak654 - Templates / Documentation / Code fixes / Collaborator
-- typpos - UI additions / Documentation / Code fixes
-- Yeyixiao - Feature additions
-- Deezzir - Feature additions
-- wzxjohn - Code fixes, Documentation additions
-- okrc - Code fixes
-- Sapour - Code fixes
-- lmou523 - Code fixes
-- sredna - Code fixes for Classic installer
-- weihongx9315 - Code fix
-- marti4d - Code fix
-- jorgectf - CodeQL workflow
-- stephtr - CI / Certification
-- yfdyh000 - Localization support for Plus installer
-- Dyras - Templates additions
-- cricri-pingouin - UI fixes
-- Valinwolf - UI / Icons
-- daveout - UI / Icons
-- kokofixcomputers - Support member of the [Discord](https://discord.gg/S4tFu6Enne) channel
-- NewKidOnTheBlock - Changelog fixes
-- Naeemh1 - Documentation additions
-- APMichael - Templates additions
-- 1mm0rt41PC - Documentation additions
-- Luro223 - Documentation additions
-- lwcorp - Documentation additions
-- wilders-soccerfan - Documentation additions
-- LepordCat - Documentation additions
-- stdedos - Documentation additions
-- habatake - UI additions, Code fixes
-- Polyester6719 - Documentation additions
-
-## 🌏 Translators
-
-- czoins - Arabic
-- yuhao2348732, 0x391F, nkh0472, yfdyh000, gexgd0419, Zerorigin, UnnamedOrange, DevSplash, Becods, okrc, 4rt3mi5, sepcnt, fzxx, Vstory, GT-Stardust, habatake - Simplified Chinese
-- TragicLifeHu, Hulen, xiongsp, habatake - Traditional Chinese
-- RockyTDR - Dutch
-- clexanis, Mmoi-Fr, hippalectryon-0, Monsieur Pissou - French (provided by email)
-- bastik-1001, APMichael - German
-- timinoun - Hungarian (provided by email)
-- isaak654, DerivativeOfLog7 - Italian
-- takahiro-itou, lllIIIlll - Japanese
-- VenusGirl - Korean
-- divinity76 - Norwegian Bokmål
-- 7zip, AndrzejRafalowski - Polish ([provided separately](https://forum.xanasoft.com/threads/polish-translation.4/page-2))
-- JNylson - Portuguese and Brazilian Portuguese
-- lufog, marat2509 - Russian
-- LumitoLuma, sebadamus - Spanish
-- 1FF, Thatagata - Swedish (provided by email or pull request)
-- xorcan, fmbxnary, offhub - Turkish
-- SuperMaxusa, lufog - Ukrainian
-- GunGunGun - Vietnamese
-
-All translators are encouraged to look at the [Localization notes and tips](https://git.io/J9G19) before sending a translation.
-
-## 📚 Documentation Translators
-
-- Vstory, GT-Stardust, wzxjohn, SOLEADO20, habatake - Simplified Chinese
-
-All documentation translators are encouraged to look at the [Multilingual Translation Contribution Guide](https://github.com/sandboxie-plus/sandboxie-docs/issues/175#issuecomment-2840258519) before sending a translation.
+## 📜 Credits & Links
+* **Official Sandboxie:** [Sandboxie-Plus](https://github.com/sandboxie/sandboxie)
+* **Inspiration:** [lyc8503/Sandboxie-crack](https://github.com/lyc8503/Sandboxie-crack)
+* **Driver Loader:** [GDRVLoader by zer0condition](https://github.com/zer0condition/GDRVLoader)
