@@ -6,7 +6,7 @@ This repository contains a modified build of the open-source [Sandboxie](https:/
 
 ## 📑 Table of Contents
 1. [Prerequisites & Environment](#-prerequisites--environment)
-2. [Setup Preparation Scripts](-1-setup-preparation-scripts)
+2. [Setup Preparation Scripts](#️-1-setup-preparation-scripts)
 3. [Visual Studio Configuration](#-2-visual-studio-project-configuration)
 4. [Compilation Workflow (Build Order)](#-3-compilation-workflow)
 5. [Custom Certificate Handling](#-4-custom-certificate-handling)
