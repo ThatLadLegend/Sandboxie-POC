@@ -7,7 +7,7 @@ IF "%1"=="Win32" (
   
   set build_arch=Win32
   set qt_params=
-  call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat"
+  call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
 )
 
 IF "%1"=="x64" (
@@ -17,7 +17,7 @@ IF "%1"=="x64" (
   
   set build_arch=x64
   set qt_params=
-  call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+  call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 )
 
 IF "%1"=="ARM64" (
