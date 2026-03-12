@@ -8,12 +8,18 @@ REM IF "%~4" == "" ( set "ghQtBuilds_user=xanasoft" ) ELSE ( set "ghQtBuilds_use
 REM IF "%~3" == "" ( set "qt6_version=6.3.1" ) ELSE ( set "qt6_version=%~3" )
 REM IF "%~2" == "" ( set "qt_version=5.15.16" ) ELSE ( set "qt_version=%~2" )
 
-if exist "%~dp0..\..\Qt\%qt_version%\msvc2022_64\bin\qmake.exe" goto done
+if %1 == Win32 (
+    if exist %~dp0..\..\Qt\%qt_version%\msvc2022\bin\qmake.exe goto done
 
-curl -L -o "%~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86_64.7z" https://download.qt.io/archive/qt/6.9/6.9.1/single/qt-everywhere-src-6.9.1.zip
-"E:\Program Files\7-Zip\7z.exe" x -aoa -o"D:\Virtual Machine VM's\Qt\" "D:\Virtual Machine VM's\qt-everywhere-src-6.9.1.zip"
+    curl -LsSO --output-dir %~dp0..\..\ https://download.qt.io/archive/qt/6.9/6.9.1/single/qt-everywhere-src-6.9.1.zip
+    "C:\Program Files\7-Zip\7z.exe" x -aoa -o%~dp0..\..\Qt\ %~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86.7z
+)
+if %1 == x64 (
+    if exist %~dp0..\..\Qt\%qt_version%\msvc2022_64\bin\qmake.exe goto done
 
-
+    curl -LsSO --output-dir %~dp0..\..\ https://download.qt.io/archive/qt/6.9/6.9.1/single/qt-everywhere-src-6.9.1.zip
+    "C:\Program Files\7-Zip\7z.exe" x -aoa -o%~dp0..\..\Qt\ %~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86_64.7z
+)
 
 if %ERRORLEVEL% == 1 exit /b 1
 
