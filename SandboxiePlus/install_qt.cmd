@@ -11,13 +11,13 @@ REM IF "%~2" == "" ( set "qt_version=5.15.16" ) ELSE ( set "qt_version=%~2" )
 if %1 == Win32 (
     if exist %~dp0..\..\Qt\%qt_version%\msvc2022\bin\qmake.exe goto done
 
-    curl -LsSO --output-dir %~dp0..\..\ https://download.qt.io/archive/qt/6.9/6.9.1/single/qt-everywhere-src-6.9.1.zip
+    curl -LsSO --output-dir %~dp0..\..\ https://github.com/ThatLadLegend/Sandboxie-POC/releases/download/Additional/qt-everywhere-6.9.1-Windows_7-MSVC2022-x86_64.zip
     "C:\Program Files\7-Zip\7z.exe" x -aoa -o%~dp0..\..\Qt\ %~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86.7z
 )
 if %1 == x64 (
     if exist %~dp0..\..\Qt\%qt_version%\msvc2022_64\bin\qmake.exe goto done
 
-    curl -LsSO --output-dir %~dp0..\..\ https://download.qt.io/archive/qt/6.9/6.9.1/single/qt-everywhere-src-6.9.1.zip
+    curl -LsSO --output-dir %~dp0..\..\ https://github.com/ThatLadLegend/Sandboxie-POC/releases/download/Additional/qt-everywhere-6.9.1-Windows_7-MSVC2022-x86_64.zip
     "C:\Program Files\7-Zip\7z.exe" x -aoa -o%~dp0..\..\Qt\ %~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86_64.7z
 )
 
