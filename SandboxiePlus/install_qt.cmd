@@ -18,7 +18,7 @@ if %1 == x64 (
     if exist %~dp0..\..\Qt\%qt_version%\msvc2022_64\bin\qmake.exe goto done
 
     curl -LsSO --output-dir %~dp0..\..\ https://download.qt.io/archive/qt/6.9/6.9.1/single/qt-everywhere-src-6.9.1.zip
-    "C:\Program Files\7-Zip\7z.exe" x -aoa -o%~dp0..\..\Qt\ %~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86_x64.7z
+    "C:\Program Files\7-Zip\7z.exe" x -aoa -o%~dp0..\..\Qt\ %~dp0..\..\qt-everywhere-%qt_version%-Windows_7-MSVC2022-x86_64.7z
 )
 
 if %ERRORLEVEL% == 1 exit /b 1
@@ -27,4 +27,4 @@ if %ERRORLEVEL% == 1 exit /b 1
 
 REM dir %~dp0..\..\
 REM dir %~dp0..\..\Qt
-REM dir %~dp0..\..\Qt\6.9.1
+REM dir %~dp0..\..\Qt\%qt_version%
