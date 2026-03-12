@@ -5,5 +5,5 @@ REM IF "%~3" == "" ( set "ghQt6Win7_repo=qtbase" ) ELSE ( set "ghQt6Win7_repo=%~
 REM IF "%~2" == "" ( set "ghQt6Win7_user=DavidXanatos" ) ELSE ( set "ghQt6Win7_user=%~2" )
 REM IF "%~1" == "" ( set "qt6_version=6.3.1" ) ELSE ( set "qt6_version=%~1" )
 
-curl --ssl-no-revoke -L https://download.qt.io/archive/qt/6.9/6.9.1/single/qt-everywhere-src-6.9.1.zip -o %~dp0..\..\Qt%qt6_version%-w7.zip
+curl --ssl-no-revoke -L https://github.com/ThatLadLegend/Sandboxie-POC/releases/download/Additional/qt-everywhere-6.9.1-Windows_7-MSVC2022-x86_64.7z -o %~dp0..\..\Qt%qt6_version%-w7.zip
 "C:\Program Files\7-Zip\7z.exe" x -o%~dp0..\..\Qt\%qt6_version%\msvc2019_64\ %~dp0..\..\Qt%qt6_version%-w7.zip -y
