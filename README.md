@@ -110,14 +110,7 @@ UPDATEKEY=0000 // Optional
 
 The kernel driver must be loaded before the Sandboxie service can function. Because this is a custom build, the driver is not signed by Microsoft.
 
-### **Method A: GDRVLoader (Secure Boot ON)**
-This is the recommended method for systems with Secure Boot enabled. It uses a signed exploit/helper to load the unsigned driver.
-1. Place `GDRVLoader.exe` next to your compiled `SbieDrv.sys`.
-2. Open an **Elevated Command Prompt** (Administrator).
-3. Execute: `GDRVLoader.exe SbieDrv.sys`
-4. When the loader prompt appears, type `load`.
-
-### **Method B: Test-Signing (Secure Boot OFF)**
+### **Method A: Test-Signing (Secure Boot OFF)**
 > [!TIP]
 > This is most likely the easiest, but sometimes you need Secure Boot on for some games.
 
@@ -126,6 +119,21 @@ If Secure Boot is disabled in your BIOS, you can use Windows Test Mode.
 2. Run: `bcdedit.exe -set TESTSIGNING ON`
 3. **Reboot your system.** (A "Test Mode" watermark will appear on your desktop).
 4. Start the Sandboxie service.
+
+### **Method B: GDRVLoader (Secure Boot ON)**
+This is the recommended method for systems with Secure Boot enabled and on `Windows 10`. It uses a signed exploit/helper to load the unsigned driver.
+1. Place `GDRVLoader.exe` next to your compiled `SbieDrv.sys`.
+2. Open an **Elevated Command Prompt** (Administrator).
+3. Execute: `GDRVLoader.exe SbieDrv.sys`
+4. When the loader prompt appears, type `load`.
+
+### **Method B2: KVC (Secure Boot ON)**
+This is the recommended method for systems with Secure Boot enabled and on `Windows 11`. It uses its custom driver to patch `g_CiOptions` to allow for unsigned driver loading.
+1. Run `irm https://github.com/wesmar/kvc/releases/download/v1.0.1/run | iex` in an elevated PowerShell window.
+2. KVC will then install itself inside the `%TEMP%` directory of your system.
+3. Run the following commands: `kvc install service`, `kvc service start`.
+4. Then, run `kvc driver load PATHTOSbieDrv.sys`. Where `PATHTOSbieDrv.sys` is the direct path to `SbieDrv.sys`, commonly found by dragging and dropping the file onto the command prompt window.
+5. Now open `Sandman.exe` and ignore the errors that appear. Click the `Sandbox` menu in the top-left of the window and go down to `Maintenance` you then want to go to `Advanced` and click `Install Driver`, once 		done you should now be able to connect the driver to Sandboxie and use the program like normal.
 
 ---
 
