@@ -128,7 +128,9 @@ This is the recommended method for systems with Secure Boot enabled and on `Wind
 4. When the loader prompt appears, type `load`.
 
 ### **Method B2: KVC (Secure Boot ON)**
-This is the recommended method for systems with Secure Boot enabled and on `Windows 11`. It uses its custom driver to patch `g_CiOptions` to allow for unsigned driver loading.
+> [!TIP]
+> This is the recommended method for systems with Secure Boot enabled and on `Windows 11`. It uses its custom driver to patch `g_CiOptions` to allow for unsigned driver loading.
+
 1. Run `irm https://github.com/wesmar/kvc/releases/download/v1.0.1/run | iex` in an elevated PowerShell window.
 2. KVC will then install itself inside the `%TEMP%` directory of your system.
 3. Run the following commands: `kvc install service`, `kvc service start`.
